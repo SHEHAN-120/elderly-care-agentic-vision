@@ -339,3 +339,4 @@ This meant some production concerns were intentionally left out of scope:
 - A smoke-test suite and a small CI workflow
 - Config profiles for CPU-only vs. GPU deployments
 - Optional streaming input (RTSP / webcam) instead of file-only
+- Make with Good Accuracy an Adavancedway
