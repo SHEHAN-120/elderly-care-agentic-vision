@@ -289,3 +289,51 @@ Edit defaults in `backend/core/config.py`:
 | `ModuleNotFoundError: backend` | Run from project root, not inside `backend/` |
 
 ---
+## Challenges Faced
+
+### 1. Finding representative test videos
+Curating or recording videos that genuinely cover the assignment's required scenarios was
+the single biggest challenge. The spec calls for a wide range of situations that are hard
+to capture in a single clip:
+
+- Person turning while lying in bed
+- Sitting up but not leaving the bed
+- Sitting on the edge of the bed for a prolonged period
+- Standing briefly and sitting back down
+- Leaving the bed and returning
+- Sitting on a chair, walking around the room
+- Partial occlusion by blankets, temporary full occlusion
+- Caregiver entering the frame
+- Poor lighting, person temporarily leaving the camera view
+
+Real elderly-monitoring footage is privacy-sensitive and rarely public, and staged clips
+often don't reproduce realistic ambiguity (e.g., a sit-up that *looks* like a bed exit).
+I worked around this by:
+
+- Using short, controlled staged clips for each edge case
+- Manually labeling ground truth per clip for evaluation
+- Combining clips into longer sequences to test temporal tracking and transitions
+- Documenting the residual gap between staged and real-world footage
+
+**With more time:** I would collect/annotate a larger, more diverse dataset (varied
+lighting, camera angles, clothing, blanket occlusion) to harden the classifier and
+tune thresholds against real ambiguity rather than hand-picked edge cases.
+
+### 2. Time budget — scope vs. polish
+The assignment explicitly prioritizes **temporal understanding, VLM/vision analysis,
+state tracking, and agentic decision-making over a polished application**, so I focused
+effort on the pipeline (detection → pose → state → tracker → events → alerts) and kept
+the UI minimal.
+
+This meant some production concerns were intentionally left out of scope:
+
+- No Docker image / one-command containerized run
+
+
+**With more time:** I would add:
+
+- A `Dockerfile` + `docker-compose.yml` so the whole system runs with
+  `docker compose up` (no Python/venv setup required)
+- A smoke-test suite and a small CI workflow
+- Config profiles for CPU-only vs. GPU deployments
+- Optional streaming input (RTSP / webcam) instead of file-only
