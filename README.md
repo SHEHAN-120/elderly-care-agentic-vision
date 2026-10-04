@@ -289,16 +289,3 @@ Edit defaults in `backend/core/config.py`:
 | `ModuleNotFoundError: backend` | Run from project root, not inside `backend/` |
 
 ---
-
-## License & submission
-
-Add your license and author name before pushing to GitHub. For the assignment, email the repo link to **careers@newnop.com** with subject **ASE AI/ML Assignment – [Your Name]**.
-
----
-
-## What we would improve with more time
-
-- VLM-based disambiguation for occlusion and caregiver presence  
-- Per-camera bed calibration persistence  
-- Stronger multi-person handling (elderly vs. caregiver)  
-- Automated test videos and CI for regression on timelines and bed events  
