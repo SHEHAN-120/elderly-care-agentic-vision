@@ -1,0 +1,65 @@
+{
+    "duration_sec": 1200,
+    "timeline": [
+        {
+            "start_sec": 0,
+            "end_sec": 272,
+            "state": "LYING_IN_BED"
+        },
+        {
+            "start_sec": 272,
+            "end_sec": 308,
+            "state": "SITTING_ON_BED"
+        },
+        {
+            "start_sec": 308,
+            "end_sec": 320,
+            "state": "STANDING"
+        },
+        {
+            "start_sec": 320,
+            "end_sec": 461,
+            "state": "WALKING"
+        },
+        {
+            "start_sec": 461,
+            "end_sec": 555,
+            "state": "SITTING_OUTSIDE_BED"
+        },
+        {
+            "start_sec": 555,
+            "end_sec": 582,
+            "state": "WALKING"
+        },
+        {
+            "start_sec": 582,
+            "end_sec": 601,
+            "state": "SITTING_ON_BED"
+        },
+        {
+            "start_sec": 601,
+            "end_sec": 900,
+            "state": "LYING_IN_BED"
+        },
+        {
+            "start_sec": 900,
+            "end_sec": 960,
+            "state": "SITTING_ON_BED"
+        },
+        {
+            "start_sec": 960,
+            "end_sec": 1200,
+            "state": "LYING_IN_BED"
+        }
+    ],
+    "activity_duration_sec": {
+        "lying_in_bed": 871,
+        "sitting_on_bed": 96,
+        "sitting_outside_bed": 94,
+        "standing": 12,
+        "walking": 108,
+        "unknown": 19
+    },
+    "bed_exit_count": 2,
+    "bed_return_count": 2
+}

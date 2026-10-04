@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🏥 Elderly Activity Monitoring</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --accent: #38bdf8;
+            --green: #22c55e;
+            --yellow: #eab308;
+            --red: #ef4444;
+            --text: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 32px 16px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 6px;
+        }
+
+        .subtitle {
+            color: #94a3b8;
+            margin-bottom: 28px;
+            font-size: 0.95rem;
+        }
+
+        .card {
+            background: var(--card);
+            border-radius: 14px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+        }
+
+        .dropzone {
+            border: 2px dashed #475569;
+            border-radius: 12px;
+            padding: 36px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .dropzone:hover,
+        .dropzone.dragover {
+            border-color: var(--accent);
+            background: #0b1220;
+        }
+
+        .dropzone input {
+            display: none;
+        }
+
+        .dropzone .icon {
+            font-size: 2.5rem;
+            margin-bottom: 8px;
+        }
+
+        .filename {
+            color: var(--accent);
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+
+        .controls {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+            align-items: end;
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .field label {
+            font-size: 0.8rem;
+            color: #94a3b8;
+        }
+
+        .field input {
+            background: #0b1220;
+            border: 1px solid #334155;
+            color: var(--text);
+            border-radius: 8px;
+            padding: 9px 12px;
+            font-size: 0.9rem;
+            width: 180px;
+        }
+
+        button {
+            background: var(--accent);
+            color: #0f172a;
+            border: none;
+            border-radius: 8px;
+            padding: 11px 24px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: opacity 0.2s;
+        }
+
+        button:hover:not(:disabled) {
+            opacity: 0.85;
+        }
+
+        button:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .status {
+            margin-top: 16px;
+            font-size: 0.9rem;
+        }
+
+        .status.processing {
+            color: var(--accent);
+        }
+
+        .status.error {
+            color: var(--red);
+        }
+
+        .status.done {
+            color: var(--green);
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid #334155;
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .results {
+            display: none;
+        }
+
+        .results.visible {
+            display: block;
+        }
+
+        .alert-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+        }
+
+        .alert-NORMAL {
+            background: rgba(34, 197, 94, 0.15);
+            color: var(--green);
+            border: 1px solid var(--green);
+        }
+
+        .alert-MONITOR {
+            background: rgba(234, 179, 8, 0.15);
+            color: var(--yellow);
+            border: 1px solid var(--yellow);
+        }
+
+        .alert-ALERT {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--red);
+            border: 1px solid var(--red);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .stat {
+            background: #0b1220;
+            border-radius: 10px;
+            padding: 14px;
+        }
+
+        .stat .label {
+            font-size: 0.72rem;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat .value {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-top: 4px;
+        }
+
+        pre {
+            background: #0b1220;
+            border-radius: 10px;
+            padding: 16px;
+            overflow-x: auto;
+            font-size: 0.82rem;
+            line-height: 1.5;
+            font-family: "SF Mono", Menlo, Consolas, monospace;
+            color: #cbd5e1;
+        }
+
+        h3 {
+            margin: 20px 0 10px;
+            font-size: 1rem;
+            color: var(--accent);
+        }
+
+        .video-container {
+            margin-top: 16px;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #0b1220;
+            border: 1px solid #334155;
+        }
+
+        .video-container video {
+            width: 100%;
+            display: block;
+            border-radius: 12px;
+        }
+
+        .video-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-download {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: #fff;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: opacity 0.2s;
+        }
+
+        .btn-download:hover {
+            opacity: 0.85;
+        }
+
+        .video-note {
+            color: #94a3b8;
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🏥 Elderly Activity Monitoring</h1>
+        <p class="subtitle">Agentic AI + Vision · Upload a video to analyze activity, bed events, and safety alerts.</p>
+
+        <div class="card">
+            <div class="dropzone" id="dropzone">
+                <input type="file" id="fileInput" accept="video/*" />
+                <div class="icon">📹</div>
+                <div><strong>Click to upload</strong> or drag &amp; drop a video</div>
+                <div class="filename" id="filename"></div>
+            </div>
+
+            <div class="controls">
+                <div class="field">
+                    <label>Sample interval (frames)</label>
+                    <input type="number" id="sampleInterval" value="15" min="1" max="120" />
+                </div>
+                <div class="field">
+                    <label>Bed region (x1,y1,x2,y2) — optional</label>
+                    <input type="text" id="bedRegion" placeholder="100,200,500,600" />
+                </div>
+                <button id="analyzeBtn" disabled>▶ Analyze</button>
+            </div>
+
+            <div class="status" id="status"></div>
+        </div>
+
+        <div class="card results" id="results">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+                <h3 style="margin:0;">Results</h3>
+                <span class="alert-badge" id="alertBadge">—</span>
+            </div>
+            <p style="margin-top:10px; color:#94a3b8; font-size:0.88rem;" id="alertReason"></p>
+
+            <div class="grid" id="stats"></div>
+
+            <div id="videoSection" style="display:none;">
+                <h3>📹 Annotated Output Video</h3>
+                <div class="video-container">
+                    <video id="annotatedVideo" controls preload="metadata">
+                        Your browser does not support video playback.
+                    </video>
+                </div>
+                <div class="video-actions">
+                    <a id="downloadVideoBtn" class="btn-download" download>
+                        ⬇ Download Annotated Video
+                    </a>
+                    <span class="video-note">Video shows bounding boxes, pose skeleton, and activity state per frame.</span>
+                </div>
+            </div>
+
+            <h3>Activity Timeline</h3>
+            <pre id="timeline">—</pre>
+
+            <h3>Bed Events</h3>
+            <pre id="events">—</pre>
+
+            <h3>Full Summary (JSON)</h3>
+            <pre id="summaryJson">—</pre>
+        </div>
+    </div>
+
+    <script>
+        const API = "";  // same origin
+        const dropzone = document.getElementById("dropzone");
+        const fileInput = document.getElementById("fileInput");
+        const filenameEl = document.getElementById("filename");
+        const analyzeBtn = document.getElementById("analyzeBtn");
+        const statusEl = document.getElementById("status");
+        const resultsEl = document.getElementById("results");
+
+        let selectedFile = null;
+
+        dropzone.addEventListener("click", () => fileInput.click());
+        dropzone.addEventListener("dragover", e => { e.preventDefault(); dropzone.classList.add("dragover"); });
+        dropzone.addEventListener("dragleave", () => dropzone.classList.remove("dragover"));
+        dropzone.addEventListener("drop", e => {
+            e.preventDefault(); dropzone.classList.remove("dragover");
+            if (e.dataTransfer.files.length) setFile(e.dataTransfer.files[0]);
+        });
+        fileInput.addEventListener("change", e => {
+            if (e.target.files.length) setFile(e.target.files[0]);
+        });
+
+        function setFile(f) {
+            selectedFile = f;
+            filenameEl.textContent = `✔ ${f.name} (${(f.size / 1e6).toFixed(1)} MB)`;
+            analyzeBtn.disabled = false;
+        }
+
+        analyzeBtn.addEventListener("click", async () => {
+            if (!selectedFile) return;
+            analyzeBtn.disabled = true;
+            resultsEl.classList.remove("visible");
+            setStatus("processing", "Uploading and starting analysis...");
+
+            const form = new FormData();
+            form.append("video_file", selectedFile);
+            form.append("sample_interval", document.getElementById("sampleInterval").value);
+            form.append("bed_region", document.getElementById("bedRegion").value);
+
+            try {
+                const res = await fetch(`${API}/api/analyze`, { method: "POST", body: form });
+                if (!res.ok) throw new Error(`Upload failed: ${res.status}`);
+                const data = await res.json();
+                pollResults(data.job_id);
+            } catch (err) {
+                setStatus("error", `❌ ${err.message}`);
+                analyzeBtn.disabled = false;
+            }
+        });
+
+        async function pollResults(jobId) {
+            setStatus("processing", "Analyzing video... this may take a while.");
+            const interval = setInterval(async () => {
+                try {
+                    const res = await fetch(`${API}/api/results/${jobId}`);
+                    const data = await res.json();
+                    if (data.status === "completed") {
+                        clearInterval(interval);
+                        setStatus("done", "✔ Analysis complete!");
+                        renderResults(data.summary);
+                        analyzeBtn.disabled = false;
+                    } else if (data.status === "failed") {
+                        clearInterval(interval);
+                        const errMsg = data.error ? data.error : "Unknown error";
+                        setStatus("error", `❌ Analysis failed: ${errMsg}`);
+                        analyzeBtn.disabled = false;
+                    }
+                } catch (err) {
+                    clearInterval(interval);
+                    setStatus("error", `❌ ${err.message}`);
+                    analyzeBtn.disabled = false;
+                }
+            }, 2000);
+        }
+
+        function setStatus(kind, msg) {
+            statusEl.className = `status ${kind}`;
+            statusEl.innerHTML = kind === "processing"
+                ? `<span class="spinner"></span>${msg}`
+                : msg;
+        }
+
+        function renderResults(s) {
+            resultsEl.classList.add("visible");
+            const alert = s.current_alert || { decision: "NORMAL", reason: "" };
+            const badge = document.getElementById("alertBadge");
+            badge.className = `alert-badge alert-${alert.decision}`;
+            badge.textContent = alert.decision;
+            document.getElementById("alertReason").textContent = alert.reason || "";
+
+            const stats = document.getElementById("stats");
+            stats.innerHTML = "";
+            const items = [
+                ["Duration", `${s.observation_duration_sec.toFixed(0)}s`],
+                ["Bed exits", s.bed_exit_count],
+                ["Bed returns", s.bed_return_count],
+                ["Time in bed", `${(s.total_in_bed_sec / 60).toFixed(1)}m`],
+                ["Time out of bed", `${(s.total_out_of_bed_sec / 60).toFixed(1)}m`],
+                ["Longest out", `${s.longest_out_of_bed_period_sec.toFixed(0)}s`],
+                ["Final state", s.final_state.replace(/_/g, " ")],
+            ];
+            items.forEach(([label, value]) => {
+                const div = document.createElement("div");
+                div.className = "stat";
+                div.innerHTML = `<div class="label">${label}</div><div class="value">${value}</div>`;
+                stats.appendChild(div);
+            });
+
+            document.getElementById("timeline").textContent = s.timeline_text || "—";
+            document.getElementById("events").textContent =
+                (s.events && s.events.length) ? JSON.stringify(s.events, null, 2) : "No bed events detected.";
+            document.getElementById("summaryJson").textContent = JSON.stringify(s, null, 2);
+
+            // Annotated video
+            const videoSection = document.getElementById("videoSection");
+            const videoEl = document.getElementById("annotatedVideo");
+            const dlBtn = document.getElementById("downloadVideoBtn");
+            if (s.annotated_video_url) {
+                videoEl.src = s.annotated_video_url;
+                dlBtn.href = s.annotated_video_url;
+                dlBtn.download = "annotated_output.mp4";
+                videoSection.style.display = "block";
+            } else {
+                videoSection.style.display = "none";
+            }
+        }
+    </script>
+</body>
+
+</html>

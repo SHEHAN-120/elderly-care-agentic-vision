@@ -1,0 +1,27 @@
+# Virtual environment
+env/
+.venv/
+venv/
+
+# Run outputs and uploads
+outputs/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Optional: uncomment if you prefer not to commit large weights
+# yolov8n.pt
+# pose_landmarker_lite.task
